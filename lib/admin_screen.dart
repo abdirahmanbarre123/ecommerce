@@ -203,4 +203,130 @@ class _AdminScreenState extends State<AdminScreen> {
     );
   }
 
-  
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text("Admin Panel"),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.person_add),
+            onPressed: _showAddAdminDialog,
+            tooltip: "Add Admin User",
+          ),
+          IconButton(
+            icon: Icon(Icons.logout),
+            onPressed: _logout,
+            tooltip: "Logout",
+          ),
+        ],
+      ),
+      body: SingleChildScrollView(
+        padding: EdgeInsets.all(10),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // قسم عرض المنتجات
+            Text(
+              "Products",
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            ),
+            Divider(),
+            products.isEmpty
+                ? Center(child: Text("No Products Available"))
+                : ListView.builder(
+              shrinkWrap: true,
+              physics: NeverScrollableScrollPhysics(),
+              itemCount: products.length,
+              itemBuilder: (context, index) {
+                return Card(
+                  margin: EdgeInsets.symmetric(vertical: 5),
+                  child: ListTile(
+                    title: Text(products[index]['name']),
+                    subtitle: Text(
+                        "Price: \$${products[index]['price'].toString()}"),
+                    trailing: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        IconButton(
+                          icon: Icon(Icons.edit),
+                          onPressed: () => _editProductPrice(
+                            products[index]['id'],
+                            products[index]['price'],
+                          ),
+                        ),
+                        IconButton(
+                          icon: Icon(Icons.delete, color: Colors.red),
+                          onPressed: () =>
+                              _deleteProduct(products[index]['id']),
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              },
+            ),
+            SizedBox(height: 30),
+            // قسم عرض المدراء في جدول
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  "Admin Users",
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                ),
+                ElevatedButton.icon(
+                  onPressed: _showAddAdminDialog,
+                  icon: Icon(Icons.person_add),
+                  label: Text("Add Admin"),
+                ),
+              ],
+            ),
+            Divider(),
+            adminUsers.isEmpty
+                ? Center(child: Text("No Admin Users Available"))
+                : SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: DataTable(
+                columns: [
+                  DataColumn(label: Text("ID")),
+                  DataColumn(label: Text("Username")),
+                  DataColumn(label: Text("Password")),
+                  DataColumn(label: Text("Actions")),
+                ],
+                rows: adminUsers.map((admin) {
+                  return DataRow(
+                    cells: [
+                      DataCell(Text(admin['id'].toString())),
+                      DataCell(Text(admin['username'])),
+                      DataCell(Text(admin['password'])),
+                      DataCell(
+                        Row(
+                          children: [
+                            IconButton(
+                              icon: Icon(Icons.edit),
+                              onPressed: () => _editAdminUser(
+                                admin['id'],
+                                admin['username'],
+                                admin['password'],
+                              ),
+                            ),
+                            IconButton(
+                              icon: Icon(Icons.delete, color: Colors.red),
+                              onPressed: () =>
+                                  _deleteAdminUser(admin['id']),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  );
+                }).toList(),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
