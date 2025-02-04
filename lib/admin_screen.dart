@@ -189,9 +189,18 @@ class _AdminScreenState extends State<AdminScreen> {
   }
 
   /// دالة لحذف المدير
- 
+  void _deleteAdminUser(int id) async {
+    await DatabaseHelper.deleteAdmin(id);
+    loadAdminUsers();
+  }
 
   /// دالة لتسجيل الخروج والانتقال إلى شاشة تسجيل الدخول
-  
+  void _logout() {
+    Navigator.pushAndRemoveUntil(
+      context,
+      MaterialPageRoute(builder: (context) => LoginScreen()),
+          (route) => false,
+    );
+  }
 
   
